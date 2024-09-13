@@ -3,7 +3,12 @@ import nltk
 import spacy
 nltk.download('stopwords')
 spacy.load('en_core_web_sm')
-
+from pandas.api.types import (
+    is_categorical_dtype,
+    is_datetime64_any_dtype,
+    is_numeric_dtype,
+    is_object_dtype,
+)
 import pandas as pd
 import base64, random
 import time, datetime
@@ -67,7 +72,8 @@ def show_pdf(file_path):
 
 
 def course_recommender(course_list):
-    st.subheader("**Courses & Certificates🎓 Recommendations**")
+    st.markdown("<h3 style='color: #F99417; font-size: 40px;'>Courses & Certificates🎓 Recommendations</h3>", unsafe_allow_html=True)
+    
     c = 0
     rec_course = []
     no_of_reco = st.slider('Choose Number of Course Recommendations:', 1, 10, 4)
@@ -98,26 +104,25 @@ def insert_data(name, email, res_score, timestamp, no_of_pages, reco_field, cand
 
 
 st.set_page_config(
-    page_title="Smart Resume Analyzer",
-    page_icon='./Logo/SRA_Logo.ico',
+    page_title="Resume Analyzer",
+    page_icon='./Logo/cooltext445857747700519_fh0_1.ico'
 )
 
 
 def run():
-    st.title("Smart Resume Analyser")
-    st.sidebar.markdown("# Choose User")
-    activities = ["Normal User", "Admin"]
-    choice = st.sidebar.selectbox("Choose among the given options:", activities)
-    # link = '[©Developed by Spidy20](http://github.com/spidy20)'
-    # st.sidebar.markdown(link, unsafe_allow_html=True)
-    img = Image.open('./Logo/SRA_Logo.jpg')
-    img = img.resize((250, 250))
+    st.markdown("<h1 style='color: #F99417; font-size: 40px;'>Resume Analyser: Analysing and Filtering System</h1>", unsafe_allow_html=True)
+    st.sidebar.markdown("<h2 style='color: #F99417; font-size: 36px;'>Choose User </h2>", unsafe_allow_html=True)
+    activities = ["User", "Admin"]
+    choice = st.sidebar.selectbox("Choose options:", activities)
+
+    img = Image.open('./Logo/cooltext445857747700519.png')
+    img = img.resize((350, 250))
     st.image(img)
 
     # Create the DB
-    db_sql = """CREATE DATABASE IF NOT EXISTS SRA;"""
+    db_sql = """CREATE DATABASE IF NOT EXISTS RAD;"""
     cursor.execute(db_sql)
-    connection.select_db("sra")
+    connection.select_db("rad")
 
     # Create table
     DB_table_name = 'user_data'
@@ -136,7 +141,7 @@ def run():
                      PRIMARY KEY (ID));
                     """
     cursor.execute(table_sql)
-    if choice == 'Normal User':
+    if choice == 'User':
         # st.markdown('''<h4 style='text-align: left; color: #d73b5c;'>* Upload your resume, and get smart recommendation based on it."</h4>''',
         #             unsafe_allow_html=True)
         pdf_file = st.file_uploader("Choose your Resume", type=["pdf"])
@@ -151,15 +156,18 @@ def run():
             if resume_data:
                 ## Get the whole resume data
                 resume_text = pdf_reader(save_image_path)
+                st.markdown("<h2 style='color: #F99417; font-size: 40px;'>Resume Analysis</h2>", unsafe_allow_html=True)
 
-                st.header("**Resume Analysis**")
+                
                 st.success("Hello " + resume_data['name'])
-                st.subheader("**Your Basic info**")
+                st.subheader("**Basic information from Resume**")
+                
                 try:
                     st.text('Name: ' + resume_data['name'])
                     st.text('Email: ' + resume_data['email'])
                     st.text('Contact: ' + resume_data['mobile_number'])
                     st.text('Resume pages: ' + str(resume_data['no_of_pages']))
+                    
                 except:
                     pass
                 cand_level = ''
@@ -175,8 +183,8 @@ def run():
                     cand_level = "Experienced"
                     st.markdown('''<h4 style='text-align: left; color: #fba171;'>You are at experience level!''',
                                 unsafe_allow_html=True)
-
-                st.subheader("**Skills Recommendation💡**")
+                    
+                st.markdown("<h3 style='color: #F99417;'>Recommendation of Skills</h3>", unsafe_allow_html=True)
                 ## Skill shows
                 keywords = st_tags(label='### Skills that you have',
                                    text='See our skills recommendation',
@@ -211,10 +219,10 @@ def run():
                                               'Pytorch', 'Probability', 'Scikit-learn', 'Tensorflow', "Flask",
                                               'Streamlit']
                         recommended_keywords = st_tags(label='### Recommended skills for you.',
-                                                       text='Recommended skills generated from System',
+                                                       text='Recommended skills generated from RAFS Application',
                                                        value=recommended_skills, key='2')
                         st.markdown(
-                            '''<h4 style='text-align: left; color: #1ed760;'>Adding this skills to resume will boost🚀 the chances of getting a Job💼</h4>''',
+                            '''<h4 style='text-align: left; color: #1ed760;'>Boost the chances of getting a Job💼 by adding this skills to resume</h4>''',
                             unsafe_allow_html=True)
                         rec_course = course_recommender(ds_course)
                         break
@@ -230,7 +238,7 @@ def run():
                                                        text='Recommended skills generated from System',
                                                        value=recommended_skills, key='3')
                         st.markdown(
-                            '''<h4 style='text-align: left; color: #1ed760;'>Adding this skills to resume will boost🚀 the chances of getting a Job💼</h4>''',
+                            '''<h4 style='text-align: left; color: #1ed760;'>Boost the chances of getting a Job💼 by adding this skills to resume</h4>''',
                             unsafe_allow_html=True)
                         rec_course = course_recommender(web_course)
                         break
@@ -246,7 +254,7 @@ def run():
                                                        text='Recommended skills generated from System',
                                                        value=recommended_skills, key='4')
                         st.markdown(
-                            '''<h4 style='text-align: left; color: #1ed760;'>Adding this skills to resume will boost🚀 the chances of getting a Job💼</h4>''',
+                            '''<h4 style='text-align: left; color: #1ed760;'>Boost the chances of getting a Job💼 by adding this skills to resume</h4>''',
                             unsafe_allow_html=True)
                         rec_course = course_recommender(android_course)
                         break
@@ -263,7 +271,7 @@ def run():
                                                        text='Recommended skills generated from System',
                                                        value=recommended_skills, key='5')
                         st.markdown(
-                            '''<h4 style='text-align: left; color: #1ed760;'>Adding this skills to resume will boost🚀 the chances of getting a Job💼</h4>''',
+                            '''<h4 style='text-align: left; color: #1ed760;'>Boost the chances of getting a Job💼 by adding this skills to resume</h4>''',
                             unsafe_allow_html=True)
                         rec_course = course_recommender(ios_course)
                         break
@@ -281,7 +289,7 @@ def run():
                                                        text='Recommended skills generated from System',
                                                        value=recommended_skills, key='6')
                         st.markdown(
-                            '''<h4 style='text-align: left; color: #1ed760;'>Adding this skills to resume will boost🚀 the chances of getting a Job💼</h4>''',
+                            '''<h4 style='text-align: left; color: #1ed760;'>Boost the chances of getting a Job💼 by adding this skills to resume</h4>''',
                             unsafe_allow_html=True)
                         rec_course = course_recommender(uiux_course)
                         break
@@ -294,7 +302,7 @@ def run():
                 timestamp = str(cur_date + '_' + cur_time)
 
                 ### Resume writing recommendation
-                st.subheader("**Resume Tips & Ideas💡**")
+                st.markdown("<h3 style='color: #F99417;'>Resume Ideas💡</h3>", unsafe_allow_html=True)
                 resume_score = 0
                 if 'Objective' in resume_text:
                     resume_score = resume_score + 20
@@ -346,7 +354,8 @@ def run():
                         '''<h4 style='text-align: left; color: #fabc10;'>[-] According to our recommendation please add Projects👨‍💻. It will show that you have done work related the required position or not.</h4>''',
                         unsafe_allow_html=True)
 
-                st.subheader("**Resume Score📝**")
+                
+                st.markdown("<h3 style='color: #F99417;'>Your Resume Score📝</h3>", unsafe_allow_html=True)
                 st.markdown(
                     """
                     <style>
@@ -365,29 +374,14 @@ def run():
                 st.success('** Your Resume Writing Score: ' + str(score) + '**')
                 st.warning(
                     "** Note: This score is calculated based on the content that you have added in your Resume. **")
-                st.balloons()
+                st.snow()
 
                 insert_data(resume_data['name'], resume_data['email'], str(resume_score), timestamp,
                             str(resume_data['no_of_pages']), reco_field, cand_level, str(resume_data['skills']),
                             str(recommended_skills), str(rec_course))
-
-                ## Resume writing video
-                st.header("**Bonus Video for Resume Writing Tips💡**")
-                resume_vid = random.choice(resume_videos)
-                res_vid_title = fetch_yt_video(resume_vid)
-                st.subheader("✅ **" + res_vid_title + "**")
-                st.video(resume_vid)
-
-                ## Interview Preparation Video
-                st.header("**Bonus Video for Interview👨‍💼 Tips💡**")
-                interview_vid = random.choice(interview_videos)
-                int_vid_title = fetch_yt_video(interview_vid)
-                st.subheader("✅ **" + int_vid_title + "**")
-                st.video(interview_vid)
-
                 connection.commit()
             else:
-                st.error('Something went wrong..')
+                st.error('Something went wrong..') 
     else:
         ## Admin Side
         st.success('Welcome to Admin Side')
@@ -395,9 +389,9 @@ def run():
 
         ad_user = st.text_input("Username")
         ad_password = st.text_input("Password", type='password')
-        if st.button('Login'):
-            if ad_user == 'machine_learning_hub' and ad_password == 'mlhub123':
-                st.success("Welcome Kushal")
+        if st.checkbox('Login'):
+            if ad_user == 'mani' and ad_password == 'mani':
+                st.success("Welcome Admin")
                 # Display Data
                 cursor.execute('''SELECT*FROM user_data''')
                 data = cursor.fetchall()
@@ -405,13 +399,95 @@ def run():
                 df = pd.DataFrame(data, columns=['ID', 'Name', 'Email', 'Resume Score', 'Timestamp', 'Total Page',
                                                  'Predicted Field', 'User Level', 'Actual Skills', 'Recommended Skills',
                                                  'Recommended Course'])
-                st.dataframe(df)
+                
                 st.markdown(get_table_download_link(df, 'User_Data.csv', 'Download Report'), unsafe_allow_html=True)
+                
+                def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+                    """
+                    Adds a UI on top of a dataframe to let viewers filter columns
+
+                    Args:
+                        df (pd.DataFrame): Original dataframe
+
+                    Returns:
+                        pd.DataFrame: Filtered dataframe
+                    """
+                    modify = st.checkbox("Add filters")
+
+                    if not modify:
+                        return df
+
+                    df = df.copy()
+
+                    # Try to convert datetimes into a standard format (datetime, no timezone)
+                    for col in df.columns:
+                        if is_object_dtype(df[col]):
+                            try:
+                                df[col] = pd.to_datetime(df[col])
+                            except Exception:
+                                pass
+
+                        if is_datetime64_any_dtype(df[col]):
+                            df[col] = df[col].dt.tz_localize(None)
+
+                    modification_container = st.container()
+
+                    with modification_container:
+                        to_filter_columns = st.multiselect("Filter dataframe on", df.columns)
+                        for column in to_filter_columns:
+                            left, right = st.columns((1, 20))
+                            left.write("↳")
+                            # Treat columns with < 10 unique values as categorical
+                            if is_categorical_dtype(df[column]) or df[column].nunique() < 10:
+                                user_cat_input = right.multiselect(
+                                    f"Values for {column}",
+                                    df[column].unique(),
+                                    default=list(df[column].unique()),
+                                )
+                                df = df[df[column].isin(user_cat_input)]
+                            elif is_numeric_dtype(df[column]):
+                                _min = float(df[column].min())
+                                _max = float(df[column].max())
+                                step = (_max - _min) / 100
+                                user_num_input = right.slider(
+                                    f"Values for {column}",
+                                    _min,
+                                    _max,
+                                    (_min, _max),
+                                    step=step,
+                                )
+                                df = df[df[column].between(*user_num_input)]
+                            elif is_datetime64_any_dtype(df[column]):
+                                user_date_input = right.date_input(
+                                    f"Values for {column}",
+                                    value=(
+                                        df[column].min(),
+                                        df[column].max(),
+                                    ),
+                                )
+                                if len(user_date_input) == 2:
+                                    user_date_input = tuple(map(pd.to_datetime, user_date_input))
+                                    start_date, end_date = user_date_input
+                                    df = df.loc[df[column].between(start_date, end_date)]
+                            else:
+                                user_text_input = right.text_input(
+                                    f"Substring or regex in {column}",
+                                )
+                                if user_text_input:
+                                    df = df[df[column].str.contains(user_text_input)]
+
+                    return df
+
+
+                
+                st.dataframe(filter_dataframe(df))
+                                   
                 ## Admin Side Data
                 query = 'select * from user_data;'
                 plot_data = pd.read_sql(query, connection)
 
                 ## Pie chart for predicted field recommendations
+                plot_data = plot_data[plot_data['Predicted_Field'].str.strip().astype(bool)]
                 labels = plot_data.Predicted_Field.unique()
                 print(labels)
                 values = plot_data.Predicted_Field.value_counts()
